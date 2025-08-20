@@ -26,30 +26,33 @@
 //     }
 // }
 
-
 import jwt from "jsonwebtoken";
 import { User } from "../model/user.model.js";
 
 export const verifyJWT_Token = async (req, res, next) => {
   try {
-    const token =
-      req.cookies?.token ||
-      req.headers["authorization"]?.split(" ")[1]; // Bearer <token>
+    const authHeader = req.header("Authorization"); // Proper capital
+    const token = req.cookies?.token || authHeader?.split(" ")[1];
+
+    console.log("Auth Header:", authHeader);
+    console.log("Token mil gaya:", token);
 
     if (!token) {
       return res.status(401).json({ message: "No token provided" });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    console.log("Decoded ===", decoded);
 
-    req.user = await User.findById(decoded.id).select("-password"); // yahan req.user set hota hai ✅
-
-    if (!req.user) {
+    const user = await User.findById(decoded._id).select("-password");
+    if (!user) {
       return res.status(401).json({ message: "User not found" });
     }
 
+    req.user = user;
     next();
   } catch (error) {
+    console.error("JWT Error:", error.message);
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
