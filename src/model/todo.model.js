@@ -13,7 +13,14 @@ const todoSchema = new Schema({
     type: String,
     enum: ["pending", "completed"],
     default: "pending"
+  },
+  userId:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"User",
+    required:true,
+    index:true
   }
+
 },{timestamps:true})
 
 export const Todo=mongoose.model("Todo",todoSchema) 
