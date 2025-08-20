@@ -22,6 +22,6 @@ app.get("/", (req, res) => {
   res.send("Backend server is running successfully 🚀");
 });
 app.use("/api/todo",todoRoute)
-app.use("/api/user",userRoute)
+app.use("/api/todo/user",userRoute)
 
 export default app;
